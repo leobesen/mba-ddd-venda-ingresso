@@ -4,7 +4,12 @@ export abstract class ValueObject<Value = any> {
   protected readonly _value: Value;
 
   constructor(value: Value) {
+    this.validate(value);
     this._value = deepFreeze(value);
+  }
+
+  protected validate(value: Value): void {
+    // Optional: Override in subclasses to validate invariants
   }
 
   get value(): Value {
@@ -15,13 +20,17 @@ export abstract class ValueObject<Value = any> {
     if (obj === null || obj === undefined) {
       return false;
     }
-    if (obj.value === undefined) {
+
+    // Safer than constructor.name for minification
+    if (!(obj instanceof ValueObject)) {
       return false;
     }
-    if (obj.constructor.name !== this.constructor.name) {
+
+    // strict check for exact same class if desired
+    if (Object.getPrototypeOf(this) !== Object.getPrototypeOf(obj)) {
       return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
     return isEqual(this.value, obj.value);
   }
 
