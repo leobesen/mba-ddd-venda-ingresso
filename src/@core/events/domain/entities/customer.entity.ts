@@ -1,14 +1,15 @@
 import { AggregateRoot } from 'src/@core/common/domain/aggregate-root';
 import { CpfVO } from 'src/@core/common/domain/value-objects/cpf.vo';
+import { UuidVO } from 'src/@core/common/domain/value-objects/uuid.vo';
 
 export type CustomerConstructorProps = {
-  id: string;
+  id: UuidVO;
   cpf: CpfVO;
   name: string;
 };
 
 export class Customer extends AggregateRoot {
-  id: string;
+  id: UuidVO;
   cpf: CpfVO;
   name: string;
 
@@ -20,7 +21,7 @@ export class Customer extends AggregateRoot {
   }
 
   static create(command: { name: string; cpf: string }): Customer {
-    const id = crypto.randomUUID();
+    const id = new UuidVO();
     return new Customer({
       id,
       cpf: new CpfVO(command.cpf),
@@ -30,7 +31,7 @@ export class Customer extends AggregateRoot {
 
   toJSON() {
     return {
-      id: this.id,
+      id: this.id.value,
       cpf: this.cpf.value,
       name: this.name,
     };
