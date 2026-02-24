@@ -32,3 +32,5 @@ export class Partner extends AggregateRoot {
     };
   }
 }
+
+export default Partner;
