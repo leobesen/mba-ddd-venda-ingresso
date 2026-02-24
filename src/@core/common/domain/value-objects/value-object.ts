@@ -8,6 +8,7 @@ export abstract class ValueObject<Value = any> {
     this._value = deepFreeze(value);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected validate(value: Value): void {
     // Optional: Override in subclasses to validate invariants
   }
@@ -31,6 +32,7 @@ export abstract class ValueObject<Value = any> {
       return false;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return isEqual(this.value, obj.value);
   }
 
