@@ -1,20 +1,26 @@
 import crypto from 'crypto';
 import { ValueObject } from './value-object';
-// import { validate as uuidValidate } from 'uuid';
+import { validate as uuidValidate } from 'uuid';
 
-export class UuidVO extends ValueObject<string> {
+export class Uuid extends ValueObject<string> {
   constructor(id?: string) {
     super(id || crypto.randomUUID());
+    this.validate();
   }
 
-  validate(id: string) {
-    if (!id) {
-      throw new Error('UUID is required');
+  validate() {
+    const isValid = uuidValidate(this._value);
+    if (!isValid) {
+      throw new InvalidUuidError(this._value);
     }
-
-    // const isValid = uuidValidate(id);
-    // if (!isValid) {
-    //   throw new Error('Invalid UUID');
-    // }
   }
 }
+
+export class InvalidUuidError extends Error {
+  constructor(value: string) {
+    super(`Invalid UUID: ${value}`);
+    this.name = 'InvalidUuidError';
+  }
+}
+
+export default Uuid;
