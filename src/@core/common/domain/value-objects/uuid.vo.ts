@@ -4,14 +4,15 @@ import { validate as uuidValidate } from 'uuid';
 
 export class Uuid extends ValueObject<string> {
   constructor(id?: string) {
-    super(id || crypto.randomUUID());
-    this.validate();
+    const value = id || crypto.randomUUID();
+    super(value);
+    this.validate(value);
   }
 
-  validate() {
-    const isValid = uuidValidate(this._value);
+  validate(value: string) {
+    const isValid = uuidValidate(value);
     if (!isValid) {
-      throw new InvalidUuidError(this._value);
+      throw new InvalidUuidError(value);
     }
   }
 }
