@@ -1,7 +1,7 @@
 import { AggregateRoot } from 'src/@core/common/domain/aggregate-root';
-import { UuidVO } from 'src/@core/common/domain/value-objects/uuid.vo';
+import { Uuid } from 'src/@core/common/domain/value-objects/uuid.vo';
 
-export class PartnerId extends UuidVO {}
+export class PartnerId extends Uuid {}
 
 export type PartnerConstructorProps = {
   id?: PartnerId | string;
