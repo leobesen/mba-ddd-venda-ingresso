@@ -1,6 +1,7 @@
 import { AggregateRoot } from 'src/@core/common/domain/aggregate-root';
 import { Uuid } from 'src/@core/common/domain/value-objects/uuid.vo';
 import { PartnerId } from './partner.entity';
+import { EventSection } from './event-section';
 
 export class EventId extends Uuid {}
 
@@ -21,6 +22,7 @@ export type EventConstructorProps = {
   total_spots: number;
   total_spotts_reserved: number;
   partner_id: PartnerId;
+  sections?: Set<EventSection>;
 };
 
 export class Event extends AggregateRoot {
@@ -33,6 +35,7 @@ export class Event extends AggregateRoot {
   total_spots: number;
   total_spotts_reserved: number;
   partner_id: PartnerId;
+  sections: Set<EventSection>;
 
   constructor(props: EventConstructorProps) {
     super();
@@ -47,6 +50,7 @@ export class Event extends AggregateRoot {
       props.partner_id instanceof PartnerId
         ? props.partner_id
         : new PartnerId(props.partner_id);
+    this.sections = props.sections ?? new Set<EventSection>();
   }
 
   static create(command: CreateEventCommand) {
@@ -69,6 +73,7 @@ export class Event extends AggregateRoot {
       total_spots: this.total_spots,
       total_spotts_reserved: this.total_spotts_reserved,
       partner_id: this.partner_id.value,
+      sections: Array.from(this.sections).map((section) => section.toJSON()),
     };
   }
 }
