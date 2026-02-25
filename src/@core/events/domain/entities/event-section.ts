@@ -6,7 +6,7 @@ export class EventSectionId extends Uuid {}
 
 export type EventSectionCreateCommand = {
   name: string;
-  decription: string | null;
+  description: string | null;
   total_spots: number;
   price: number;
 };
@@ -14,7 +14,7 @@ export type EventSectionCreateCommand = {
 export type EventSectionConstructorProps = {
   id?: EventSectionId | string;
   name: string;
-  decription: string | null;
+  description: string | null;
   is_published: boolean;
   total_spots: number;
   total_spots_reserved: number;
@@ -25,7 +25,7 @@ export type EventSectionConstructorProps = {
 export class EventSection extends Entity {
   id: EventSectionId;
   name: string;
-  decription: string | null;
+  description: string | null;
   is_published: boolean;
   total_spots: number;
   total_spots_reserved: number;
@@ -39,7 +39,7 @@ export class EventSection extends Entity {
         ? props.id
         : new EventSectionId(props.id);
     this.name = props.name;
-    this.decription = props.decription;
+    this.description = props.description;
     this.is_published = props.is_published;
     this.total_spots = props.total_spots;
     this.total_spots_reserved = props.total_spots_reserved;
@@ -50,7 +50,7 @@ export class EventSection extends Entity {
   static create(command: EventSectionCreateCommand) {
     return new EventSection({
       ...command,
-      decription: command.decription ?? null,
+      description: command.description ?? null,
       is_published: false,
       total_spots_reserved: 0,
     });
@@ -60,7 +60,7 @@ export class EventSection extends Entity {
     return {
       id: this.id.value,
       name: this.name,
-      decription: this.decription,
+      description: this.description,
       is_published: this.is_published,
       total_spots: this.total_spots,
       total_spots_reserved: this.total_spots_reserved,
