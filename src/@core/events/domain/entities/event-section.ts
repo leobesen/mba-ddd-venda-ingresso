@@ -48,12 +48,25 @@ export class EventSection extends Entity {
   }
 
   static create(command: EventSectionCreateCommand) {
-    return new EventSection({
+    const section = new EventSection({
       ...command,
       description: command.description ?? null,
       is_published: false,
       total_spots_reserved: 0,
     });
+    section.InitSpots();
+    return section;
+  }
+
+  private InitSpots() {
+    for (let i = 0; i < this.total_spots; i++) {
+      const spot = new EventSpot({
+        location: `Spot ${i + 1}`,
+        is_published: false,
+        is_reserved: false,
+      });
+      this.spots.add(spot);
+    }
   }
 
   toJSON() {
