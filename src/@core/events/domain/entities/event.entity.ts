@@ -88,6 +88,27 @@ export class Event extends AggregateRoot {
     this.total_spots += section.total_spots;
   }
 
+  publishAll() {
+    this.publish();
+    this.sections.forEach((section) => section.publishAll());
+  }
+
+  unpublishAll() {
+    this.unpublish();
+    this.sections.forEach((section) => section.unpublishAll());
+  }
+
+  publish() {
+    if (this.sections.size === 0) {
+      throw new Error('Cannot publish an event without sections');
+    }
+    this.is_published = true;
+  }
+
+  unpublish() {
+    this.is_published = false;
+  }
+
   toJSON() {
     return {
       id: this.id.value,
