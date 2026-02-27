@@ -70,6 +70,18 @@ export class Event extends AggregateRoot {
     });
   }
 
+  changeName(newName: string) {
+    this.name = newName;
+  }
+
+  changeDescription(newDescription: string | null) {
+    this.description = newDescription;
+  }
+
+  changeDate(newDate: Date) {
+    this.date = newDate;
+  }
+
   addSection(command: AddSectionCommand) {
     const section = EventSection.create(command);
     this.sections.add(section);

@@ -69,6 +69,18 @@ export class EventSection extends Entity {
     }
   }
 
+  changeName(newName: string) {
+    this.name = newName;
+  }
+
+  changeDescription(newDescription: string | null) {
+    this.description = newDescription;
+  }
+
+  changePrice(newPrice: number) {
+    this.price = newPrice;
+  }
+
   toJSON() {
     return {
       id: this.id.value,

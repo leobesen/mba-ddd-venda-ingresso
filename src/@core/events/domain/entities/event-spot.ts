@@ -33,6 +33,10 @@ export class EventSpot extends Entity {
     });
   }
 
+  changeLocation(newLocation: string) {
+    this.location = newLocation;
+  }
+
   toJSON() {
     return {
       id: this.id.value,
