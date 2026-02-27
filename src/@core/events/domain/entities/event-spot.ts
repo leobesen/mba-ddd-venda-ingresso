@@ -37,6 +37,14 @@ export class EventSpot extends Entity {
     this.location = newLocation;
   }
 
+  publish() {
+    this.is_published = true;
+  }
+
+  unpublish() {
+    this.is_published = false;
+  }
+
   toJSON() {
     return {
       id: this.id.value,
