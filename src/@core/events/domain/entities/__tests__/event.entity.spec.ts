@@ -20,14 +20,48 @@ describe('Event', () => {
       name: 'VIP',
       description: 'VIP section with exclusive benefits',
       price: 100,
-      total_spots: 50,
+      total_spots: 5,
     });
     expect(event.sections.size).toBe(1);
-    expect(event.total_spots).toBe(50);
+    expect(event.total_spots).toBe(5);
     expect(event.sections.values().next().value).toBeInstanceOf(EventSection);
 
     const [section] = event.sections;
-    expect(section.spots.size).toBe(50);
+    expect(section.spots.size).toBe(5);
+
+    console.log(JSON.stringify(event.toJSON(), null, 2));
+  });
+
+  test('Should publish all items in the event', () => {
+    const event = Event.create({
+      name: 'Concert',
+      description: 'A live concert event',
+      date: new Date(),
+      partner_id: new PartnerId(),
+    });
+
+    event.addSection({
+      name: 'VIP',
+      description: 'VIP section with exclusive benefits',
+      price: 100,
+      total_spots: 5,
+    });
+
+    event.addSection({
+      name: 'General Admission',
+      description: 'General admission section',
+      price: 50,
+      total_spots: 5,
+    });
+
+    event.publishAll();
+    expect(event.is_published).toBe(true);
+    const [section1, section2] = event.sections;
+    expect(section1.is_published).toBe(true);
+    expect(section2.is_published).toBe(true);
+    [...section1.spots, ...section2.spots].forEach((spot) => {
+      expect(spot.is_published).toBe(true);
+    });
 
     console.log(JSON.stringify(event.toJSON(), null, 2));
   });
