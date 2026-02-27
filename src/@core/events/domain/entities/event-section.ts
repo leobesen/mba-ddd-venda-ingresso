@@ -81,6 +81,27 @@ export class EventSection extends Entity {
     this.price = newPrice;
   }
 
+  publishAll() {
+    this.publish();
+    this.spots.forEach((spot) => spot.publish());
+  }
+
+  unpublishAll() {
+    this.unpublish();
+    this.spots.forEach((spot) => spot.unpublish());
+  }
+
+  publish() {
+    if (this.spots.size === 0) {
+      throw new Error('Cannot publish a section without spots');
+    }
+    this.is_published = true;
+  }
+
+  unpublish() {
+    this.is_published = false;
+  }
+
   toJSON() {
     return {
       id: this.id.value,
