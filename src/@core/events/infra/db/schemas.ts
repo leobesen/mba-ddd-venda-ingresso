@@ -6,8 +6,7 @@ export const PartnerSchema = new EntitySchema<Partner>({
   class: Partner,
   properties: {
     id: {
-      type: 'string',
-      customType: new PartnerIdSchemaType(),
+      type: PartnerIdSchemaType,
       primary: true,
     },
     name: { type: 'string', length: 255 },
