@@ -14,7 +14,13 @@ test('Should create a partner schema', async () => {
   await orm.schema.refreshDatabase();
   const em = orm.em.fork();
   const partner = Partner.create({ name: 'Partner 1' });
+  console.log(partner);
   em.persist(partner);
   await em.flush();
+  // Force a clean unit of work to ensure the entity is saved and can be found
+  em.clear();
+  const partnerFound = await em.findOne(Partner, { id: partner.id });
+  console.log(partnerFound);
+
   await orm.close();
 });
