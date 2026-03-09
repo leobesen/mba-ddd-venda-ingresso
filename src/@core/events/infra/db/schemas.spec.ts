@@ -10,6 +10,7 @@ test('Should create a partner schema', async () => {
     port: 3306,
     user: 'user',
     password: 'password',
+    forceEntityConstructor: true,
   });
   await orm.schema.refreshDatabase();
   const em = orm.em.fork();
