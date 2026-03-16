@@ -43,6 +43,7 @@
     "@swc/jest": "^0.2.39",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
+    "@types/lodash": "^4.17.24",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
