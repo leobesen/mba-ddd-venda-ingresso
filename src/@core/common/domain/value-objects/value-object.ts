@@ -32,7 +32,7 @@ export abstract class ValueObject<Value = any> {
       return false;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     return isEqual(this.value, obj.value);
   }
 
