@@ -3,6 +3,7 @@ import { CustomerSchema } from '../infra/db/schemas';
 import { CustomerMysqlRepository } from '../infra/db/repositories/customer-mysql.repository';
 import { Customer } from '../domain/entities/customer.entity';
 import { CustomerService } from './customer.service';
+import { UnitOfWorkMikroOrm } from 'src/@core/common/infra/unit-of-work-mikro-orm';
 
 test('Should list customers', async () => {
   const orm = await MikroORM.init<MySqlDriver>({
@@ -17,7 +18,8 @@ test('Should list customers', async () => {
   await orm.schema.refreshDatabase();
   const em = orm.em.fork();
   const customerRepo = new CustomerMysqlRepository(em);
-  const customerService = new CustomerService(customerRepo);
+  const unitOfWork = new UnitOfWorkMikroOrm(em);
+  const customerService = new CustomerService(customerRepo, unitOfWork);
   const customer = Customer.create({ name: 'Customer 1', cpf: '50290805031' });
   await customerRepo.add(customer);
   await em.flush();
@@ -42,13 +44,21 @@ test('Should register a customer', async () => {
   await orm.schema.refreshDatabase();
   const em = orm.em.fork();
   const customerRepo = new CustomerMysqlRepository(em);
-  const customerService = new CustomerService(customerRepo);
+  const unitOfWork = new UnitOfWorkMikroOrm(em);
+  const customerService = new CustomerService(customerRepo, unitOfWork);
 
   const input = { name: 'Customer 1', cpf: '50290805031' };
   const customer = await customerService.register(input);
   expect(customer).toBeInstanceOf(Customer);
   expect(customer.name).toBe(input.name);
   expect(customer.cpf.value).toBe(input.cpf);
+
+  em.clear();
+
+  const customerFound = await customerRepo.findById(customer.id);
+  expect(customerFound).not.toBeNull();
+  expect(customerFound?.name).toBe(input.name);
+  expect(customerFound?.cpf.value).toBe(input.cpf);
 
   await orm.close();
 });
