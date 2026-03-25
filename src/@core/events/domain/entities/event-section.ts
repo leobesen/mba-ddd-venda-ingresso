@@ -48,7 +48,7 @@ export class EventSection extends Entity {
     this.total_spots = props.total_spots;
     this.total_spots_reserved = props.total_spots_reserved;
     this.price = props.price;
-    this._spots = MyCollectionFactory.create<EventSpot>(this);
+    this._spots = MyCollectionFactory.create<EventSpot>(this, 'spots');
   }
 
   static create(command: EventSectionCreateCommand) {

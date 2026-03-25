@@ -62,7 +62,7 @@ export class Event extends AggregateRoot {
       props.partner_id instanceof PartnerId
         ? props.partner_id
         : new PartnerId(props.partner_id);
-    this._sections = MyCollectionFactory.create<EventSection>(this);
+    this._sections = MyCollectionFactory.create<EventSection>(this, 'sections');
   }
 
   static create(command: CreateEventCommand) {
