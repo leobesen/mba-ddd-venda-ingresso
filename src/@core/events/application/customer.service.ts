@@ -18,4 +18,17 @@ export class CustomerService {
     await this.uow.commit();
     return customer;
   }
+
+  async update(id: string, input: { name?: string }) {
+    const customer = await this.customerRepository.findById(id);
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+    if (input.name) {
+      customer.changeName(input.name);
+    }
+    await this.customerRepository.add(customer);
+    await this.uow.commit();
+    return customer;
+  }
 }
