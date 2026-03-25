@@ -1,7 +1,7 @@
 import { Collection } from '@mikro-orm/core';
 
 export interface ICollection<T extends object> {
-  getItems(): Iterable<T>;
+  getItems(): T[];
   add(item: T, ...items: T[]): void;
   remove(item: T, ...items: T[]): void;
   find(predicate: (item: T) => boolean): T | undefined;
@@ -10,18 +10,83 @@ export interface ICollection<T extends object> {
   removeAll(): void;
   count(): number;
   size: number;
-  values(): T[];
+  values(): IterableIterator<T>;
   [Symbol.iterator](): IterableIterator<T>;
 }
 //Design Pattern - Proxy
 
 export type AnyCollection<T extends object> = Collection<T>;
 
+class InMemoryCollection<T extends object> implements ICollection<T> {
+  private readonly items = new Set<T>();
+
+  getItems(): T[] {
+    return Array.from(this.items);
+  }
+
+  add(item: T, ...items: T[]): void {
+    [item, ...items].forEach((entry) => this.items.add(entry));
+  }
+
+  remove(item: T, ...items: T[]): void {
+    [item, ...items].forEach((entry) => this.items.delete(entry));
+  }
+
+  find(predicate: (item: T) => boolean): T | undefined {
+    return this.getItems().find(predicate);
+  }
+
+  forEach(callbackfn: (value: T, index: number) => void): void {
+    this.getItems().forEach(callbackfn);
+  }
+
+  map<U>(callbackfn: (value: T, index: number) => U): U[] {
+    return this.getItems().map(callbackfn);
+  }
+
+  removeAll(): void {
+    this.items.clear();
+  }
+
+  count(): number {
+    return this.items.size;
+  }
+
+  get size(): number {
+    return this.items.size;
+  }
+
+  values(): IterableIterator<T> {
+    return this.items.values();
+  }
+
+  [Symbol.iterator](): IterableIterator<T> {
+    return this.values();
+  }
+}
+
 export class MyCollectionFactory {
-  static create<T extends object>(ref: object): ICollection<T> {
-    const collection = new Collection<T>(ref);
-    collection['initialized'] = false;
-    return MyCollectionFactory.createProxy(collection);
+  static create<T extends object>(
+    ref: object,
+    property?: string,
+  ): ICollection<T> {
+    if (!property) {
+      return new InMemoryCollection<T>();
+    }
+
+    try {
+      const collection = Collection.create(
+        ref as never,
+        property as never,
+        [],
+        true,
+      );
+      return MyCollectionFactory.createProxy(
+        collection as unknown as Collection<T>,
+      );
+    } catch {
+      return new InMemoryCollection<T>();
+    }
   }
 
   static createFrom<T extends object>(target: Collection<any>): ICollection<T> {
@@ -64,7 +129,13 @@ export class MyCollectionFactory {
 
         if (prop === 'values') {
           return () => {
-            return target.getItems(false);
+            return target.getItems(false).values();
+          };
+        }
+
+        if (prop === Symbol.iterator) {
+          return function* () {
+            yield* target.getItems(false);
           };
         }
 
