@@ -11,7 +11,7 @@ test('Customer repository should create and find a Customer', async () => {
     port: 3306,
     user: 'user',
     password: 'password',
-    // forceEntityConstructor: true,
+    forceEntityConstructor: true,
   });
   await orm.schema.refreshDatabase();
   const em = orm.em.fork();
@@ -21,7 +21,6 @@ test('Customer repository should create and find a Customer', async () => {
   await customerRepo.add(customer);
   await em.flush();
   em.clear();
-
   let customerFound = await customerRepo.findById(customer.id);
   if (!customerFound) {
     throw new Error('Customer not found');
@@ -40,7 +39,7 @@ test('Customer repository should create and find a Customer', async () => {
   }
   expect(customerFound.id.equals(customer.id)).toBeTruthy();
   expect(customerFound.name).toBe(customer.name);
-  expect(customerFound.cpf).toBe(customer.cpf);
+  expect(customerFound.cpf.toString()).toBe(customer.cpf.toString());
   await customerRepo.delete(customer);
   await em.flush();
   em.clear();

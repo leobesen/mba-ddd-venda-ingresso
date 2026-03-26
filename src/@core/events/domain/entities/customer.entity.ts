@@ -6,7 +6,7 @@ export class CustomerId extends Uuid {}
 
 export type CustomerConstructorProps = {
   id?: CustomerId | string;
-  cpf: string;
+  cpf: Cpf | string;
   name: string;
 };
 
@@ -19,7 +19,7 @@ export class Customer extends AggregateRoot {
     super();
     this.id =
       props.id instanceof CustomerId ? props.id : new CustomerId(props.id);
-    this.cpf = new Cpf(props.cpf);
+    this.cpf = props.cpf instanceof Cpf ? props.cpf : new Cpf(props.cpf);
     this.name = props.name;
   }
 
