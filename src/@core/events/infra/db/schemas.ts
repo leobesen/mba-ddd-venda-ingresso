@@ -10,6 +10,9 @@ import EventSection from '../../domain/entities/event-section';
 import { EventSectionIdSchemaType } from './types/event-section-id.schema-type';
 import { EventSpot } from '../../domain/entities/event-spot';
 import { EventSpotIdSchemaType } from './types/event-spot-id.schema-type';
+import { Order, OrderStatus } from '../../domain/entities/order.entity';
+import { SpotReservation } from '../../domain/entities/spot-reservation.entity';
+import { OrderIdSchemaType } from './types/order-id.schema-type';
 
 export const PartnerSchema = new EntitySchema<Partner>({
   class: Partner,
@@ -101,6 +104,54 @@ export const EventSpotSchema = new EntitySchema<EventSpot>({
       hidden: true,
       mapToPk: true,
       type: EventSectionIdSchemaType,
+    },
+  },
+});
+
+export const SpotReservationSchema = new EntitySchema<SpotReservation>({
+  class: SpotReservation,
+  properties: {
+    id: { type: 'string', persist: false } as never,
+    spot_id: {
+      type: EventSpotIdSchemaType,
+      primary: true,
+      kind: 'm:1',
+      entity: () => EventSpot,
+      mapToPk: true,
+    },
+    reservation_date: { type: 'date' },
+    customer_id: {
+      kind: 'm:1',
+      entity: () => Customer,
+      mapToPk: true,
+      hidden: true,
+      type: CustomerIdSchemaType,
+    },
+  },
+});
+
+export const OrderSchema = new EntitySchema<Order>({
+  class: Order,
+  properties: {
+    id: {
+      type: OrderIdSchemaType,
+      primary: true,
+    },
+    amount: { type: 'number' },
+    status: { enum: true, items: () => OrderStatus },
+    customer_id: {
+      kind: 'm:1',
+      entity: () => Customer,
+      mapToPk: true,
+      hidden: true,
+      type: CustomerIdSchemaType,
+    },
+    event_spot_id: {
+      kind: 'm:1',
+      entity: () => EventSpot,
+      hidden: true,
+      mapToPk: true,
+      type: EventSpotIdSchemaType,
     },
   },
 });
