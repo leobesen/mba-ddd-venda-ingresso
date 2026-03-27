@@ -13,7 +13,7 @@ test('Should list customers', async () => {
     port: 3306,
     user: 'user',
     password: 'password',
-    // forceEntityConstructor: true,
+    forceEntityConstructor: true,
   });
   await orm.schema.refreshDatabase();
   const em = orm.em.fork();
