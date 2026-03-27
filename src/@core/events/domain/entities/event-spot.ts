@@ -45,6 +45,14 @@ export class EventSpot extends Entity {
     this.is_published = false;
   }
 
+  markSpotAsReserved() {
+    this.is_reserved = true;
+  }
+
+  markSpotAsUnreserved() {
+    this.is_reserved = false;
+  }
+
   toJSON() {
     return {
       id: this.id.value,

@@ -103,6 +103,33 @@ export class EventSection extends Entity {
     this.spots.forEach((spot) => spot.unpublish());
   }
 
+  allowReserveSpot(spotId: EventSpotId) {
+    if (!this.is_published) {
+      return false;
+    }
+    const spot = this.spots.find((s) => s.id.equals(spotId));
+    if (!spot) {
+      throw new Error('Spot not found');
+    }
+    if (!spot.is_published || spot.is_reserved) {
+      return false;
+    }
+    return true;
+  }
+
+  markSpotAsReserved(spotId: EventSpotId) {
+    const spot = this.spots.find((s) => s.id.equals(spotId));
+    if (!spot) {
+      throw new Error('Spot not found');
+    }
+    if (!spot.is_reserved) {
+      spot.markSpotAsReserved();
+      this.total_spots_reserved += 1;
+    } else {
+      throw new Error('Spot is already reserved');
+    }
+  }
+
   publish() {
     if (this.spots.size === 0) {
       throw new Error('Cannot publish a section without spots');
