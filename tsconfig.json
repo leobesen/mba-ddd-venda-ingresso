@@ -16,6 +16,10 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "types": [
+      "@types/jest", // or "@types/mocha", etc.
+      "@types/node" // Often needed for other globals like 'process'
+    ]
   }
 }
