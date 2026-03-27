@@ -49,27 +49,45 @@ export class OrderService {
       throw new Error('Spot is already reserved');
     }
 
-    const spotReservationCreated = SpotReservation.create({
-      spot_id: spotId,
-      customer_id: customer.id,
+    return this.uow.runTransaction(async () => {
+      const spotReservationCreated = SpotReservation.create({
+        spot_id: spotId,
+        customer_id: customer.id,
+      });
+
+      await this.spotReservationRepository.add(spotReservationCreated);
+
+      try {
+        await this.uow.commit();
+
+        const section = event.sections.find((s) => s.id.equals(sectionId));
+        const order = Order.create({
+          customer_id: customer.id,
+          event_spot_id: spotId,
+          amount: section ? section.price : 0,
+        });
+
+        await this.orderRepository.add(order);
+
+        event.markSpotAsReserved({ section_id: sectionId, spot_id: spotId });
+        await this.eventRepository.add(event);
+
+        await this.uow.commit();
+
+        return order;
+      } catch (e) {
+        console.log(e);
+        const section = event.sections.find((s) => s.id.equals(sectionId));
+        const order = Order.create({
+          customer_id: customer.id,
+          event_spot_id: spotId,
+          amount: section ? section.price : 0,
+        });
+        order.cancel();
+        await this.orderRepository.add(order);
+        await this.uow.commit();
+        throw new Error('Failed to reserve spot');
+      }
     });
-
-    await this.spotReservationRepository.add(spotReservationCreated);
-
-    const section = event.sections.find((s) => s.id.equals(sectionId));
-    const order = Order.create({
-      customer_id: customer.id,
-      event_spot_id: spotId,
-      amount: section ? section.price : 0,
-    });
-
-    await this.orderRepository.add(order);
-
-    event.markSpotAsReserved({ section_id: sectionId, spot_id: spotId });
-    await this.eventRepository.add(event);
-
-    await this.uow.commit();
-
-    return order;
   }
 }
