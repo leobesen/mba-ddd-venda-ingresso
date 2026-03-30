@@ -26,6 +26,8 @@ import { PaymentGateway } from 'src/@core/events/application/payment.gateway';
 import { OrderService } from 'src/@core/events/application/order.service';
 import { IOrderRepository } from 'src/@core/events/domain/repositories/order-repository.interface';
 import { ISpotReservationRepository } from 'src/@core/events/domain/repositories/spot-reservation-repository.interface';
+import { PartnersController } from './partners/partners.controller';
+import { CustomersController } from './customers/customers.controller';
 
 @Module({
   imports: [
@@ -125,5 +127,6 @@ import { ISpotReservationRepository } from 'src/@core/events/domain/repositories
       ],
     },
   ],
+  controllers: [PartnersController, CustomersController],
 })
 export class EventsModule {}
