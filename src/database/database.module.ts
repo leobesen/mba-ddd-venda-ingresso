@@ -32,11 +32,6 @@ import {
       user: 'user',
       password: 'password',
       forceEntityConstructor: true,
-      driverOptions: {
-        connection: {
-          timezone: 'Z',
-        },
-      },
     }),
   ],
   providers: [
