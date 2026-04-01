@@ -56,6 +56,10 @@ import { DomainEventManager } from 'apps/mba-ddd-venda-ingresso/src/@core/common
 import { PartnerCreated } from 'apps/mba-ddd-venda-ingresso/src/@core/events/domain/domain-events/partner-created.event';
 import { MyHandlerHandler } from 'apps/mba-ddd-venda-ingresso/src/@core/events/application/handlers/my-handler.handler';
 import { ModuleRef } from '@nestjs/core';
+import { BullModule, InjectQueue } from '@nestjs/bull';
+import { IIntegrationEvent } from '../@core/common/domain/integration-event';
+import { Queue } from 'bull';
+import { PartnerCreatedIntegrationEvent } from '../@core/events/domain/integration-events/partner-created.int-events';
 
 @Module({
   imports: [
@@ -69,6 +73,7 @@ import { ModuleRef } from '@nestjs/core';
       SpotReservationSchema,
     ]),
     ApplicationModule,
+    BullModule.registerQueue({ name: 'integration-events' }),
   ],
   providers: [
     {
@@ -179,6 +184,8 @@ export class EventsModule implements OnModuleInit {
   constructor(
     private readonly domainEventManager: DomainEventManager,
     private moduleRef: ModuleRef,
+    @InjectQueue('integration-events')
+    private integrationEventQueue: Queue<IIntegrationEvent>,
   ) {}
 
   onModuleInit() {
@@ -191,6 +198,12 @@ export class EventsModule implements OnModuleInit {
           await this.moduleRef.resolve(MyHandlerHandler);
         await handler.handle(event as PartnerCreated);
       });
+    });
+    this.domainEventManager.register(PartnerCreated.name, async (event) => {
+      const integrationEvent = new PartnerCreatedIntegrationEvent(
+        event as PartnerCreated,
+      );
+      await this.integrationEventQueue.add(integrationEvent);
     });
   }
 }
