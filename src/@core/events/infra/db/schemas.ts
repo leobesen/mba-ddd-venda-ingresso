@@ -17,6 +17,7 @@ import { OrderIdSchemaType } from './types/order-id.schema-type';
 export const PartnerSchema = new EntitySchema<Partner>({
   class: Partner,
   properties: {
+    events: { type: 'json', persist: false, hidden: true } as never,
     id: {
       type: PartnerIdSchemaType,
       primary: true,
@@ -29,6 +30,7 @@ export const CustomerSchema = new EntitySchema<Customer>({
   class: Customer,
   uniques: [{ properties: ['cpf'] }],
   properties: {
+    events: { type: 'json', persist: false, hidden: true } as never,
     id: { type: CustomerIdSchemaType, primary: true },
     cpf: { type: CpfSchemaType },
     name: { type: 'string', length: 255 },
@@ -38,6 +40,7 @@ export const CustomerSchema = new EntitySchema<Customer>({
 export const EventSchema = new EntitySchema<Event>({
   class: Event,
   properties: {
+    events: { type: 'json', persist: false, hidden: true } as never,
     id: { type: EventIdSchemaType, primary: true },
     name: { type: 'string', length: 255 },
     description: { type: 'text', nullable: true },
@@ -111,6 +114,7 @@ export const EventSpotSchema = new EntitySchema<EventSpot>({
 export const SpotReservationSchema = new EntitySchema<SpotReservation>({
   class: SpotReservation,
   properties: {
+    events: { type: 'json', persist: false, hidden: true } as never,
     id: { type: 'string', persist: false } as never,
     spot_id: {
       type: EventSpotIdSchemaType,
@@ -133,6 +137,7 @@ export const SpotReservationSchema = new EntitySchema<SpotReservation>({
 export const OrderSchema = new EntitySchema<Order>({
   class: Order,
   properties: {
+    events: { type: 'json', persist: false, hidden: true } as never,
     id: {
       type: OrderIdSchemaType,
       primary: true,
