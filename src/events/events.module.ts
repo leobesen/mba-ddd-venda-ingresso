@@ -1,6 +1,6 @@
 import { EntityManager } from '@mikro-orm/mysql';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { CustomerMysqlRepository } from 'src/@core/events/infra/db/repositories/customer-mysql.repository';
 import { OrderMysqlRepository } from 'src/@core/events/infra/db/repositories/order-mysql.repository';
 import { EventMysqlRepository } from 'src/@core/events/infra/db/repositories/event-mysql.repository';
@@ -52,6 +52,8 @@ import { EventSpotsController } from './events/event-spots.controller';
 import { OrdersController } from './orders/orders.controller';
 import { ApplicationModule } from 'src/application/application.module';
 import { ApplicationService } from 'src/@core/common/application/application.service';
+import { DomainEventManager } from 'src/@core/common/domain/domain-event-manager';
+import { PartnerCreated } from 'src/@core/events/domain/domain-events/partner-created.event';
 
 @Module({
   imports: [
@@ -163,4 +165,15 @@ import { ApplicationService } from 'src/@core/common/application/application.ser
     OrdersController,
   ],
 })
-export class EventsModule {}
+export class EventsModule implements OnModuleInit {
+  constructor(private readonly domainEventManager: DomainEventManager) {}
+
+  onModuleInit() {
+    console.log(
+      'EventsModule initialized, registering domain event handlers...',
+    );
+    this.domainEventManager.register(PartnerCreated.name, (event) => {
+      console.log('Partner created event received:', event);
+    });
+  }
+}
