@@ -1,4 +1,4 @@
-import EventEmitter2, { ListenerFn } from 'eventemitter2';
+import { EventEmitter2, ListenerFn } from 'eventemitter2';
 import { AggregateRoot } from './aggregate-root';
 import { IDomainEvent } from './domain-event';
 
