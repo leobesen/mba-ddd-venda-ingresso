@@ -54,6 +54,8 @@ import { ApplicationModule } from 'src/application/application.module';
 import { ApplicationService } from 'src/@core/common/application/application.service';
 import { DomainEventManager } from 'src/@core/common/domain/domain-event-manager';
 import { PartnerCreated } from 'src/@core/events/domain/domain-events/partner-created.event';
+import { MyHandlerHandler } from 'src/@core/events/application/handlers/my-handler.handler';
+import { ModuleRef } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -155,6 +157,14 @@ import { PartnerCreated } from 'src/@core/events/domain/domain-events/partner-cr
         PaymentGateway,
       ],
     },
+    {
+      provide: MyHandlerHandler,
+      useFactory: (
+        partnerRepo: IPartnerRepository,
+        domainEventManager: DomainEventManager,
+      ) => new MyHandlerHandler(partnerRepo, domainEventManager),
+      inject: [PARTNER_REPOSITORY, DomainEventManager],
+    },
   ],
   controllers: [
     PartnersController,
@@ -166,14 +176,21 @@ import { PartnerCreated } from 'src/@core/events/domain/domain-events/partner-cr
   ],
 })
 export class EventsModule implements OnModuleInit {
-  constructor(private readonly domainEventManager: DomainEventManager) {}
+  constructor(
+    private readonly domainEventManager: DomainEventManager,
+    private moduleRef: ModuleRef,
+  ) {}
 
   onModuleInit() {
     console.log(
       'EventsModule initialized, registering domain event handlers...',
     );
-    this.domainEventManager.register(PartnerCreated.name, (event) => {
-      console.log('Partner created event received:', event);
+    MyHandlerHandler.listensTo().forEach((eventName) => {
+      this.domainEventManager.register(eventName, async (event) => {
+        const handler: MyHandlerHandler =
+          await this.moduleRef.resolve(MyHandlerHandler);
+        await handler.handle(event as PartnerCreated);
+      });
     });
   }
 }
