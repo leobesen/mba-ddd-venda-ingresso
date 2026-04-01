@@ -20,6 +20,7 @@
     "types": [
       "@types/jest", // or "@types/mocha", etc.
       "@types/node" // Often needed for other globals like 'process'
-    ]
+    ],
+    "paths": {}
   }
 }
