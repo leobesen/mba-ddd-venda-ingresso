@@ -16,22 +16,42 @@ import {
 } from 'src/@core/events/infra/db/schemas';
 import { SpotReservationMysqlRepository } from 'src/@core/events/infra/db/repositories/spot-reservation-mysql.repository';
 import { PartnerService } from 'src/@core/events/application/partner.service';
-import { IPartnerRepository } from 'src/@core/events/domain/repositories/partner-repository.interface';
-import { IUnitOfWork } from 'src/@core/common/application/unit-of-work.interface';
+import {
+  IPartnerRepository,
+  PARTNER_REPOSITORY,
+} from 'src/@core/events/domain/repositories/partner-repository.interface';
+import {
+  IUnitOfWork,
+  IUNIT_OF_WORK,
+} from 'src/@core/common/application/unit-of-work.interface';
 import { CustomerService } from 'src/@core/events/application/customer.service';
-import { ICustomerRepository } from 'src/@core/events/domain/repositories/customer-repository.interface';
+import {
+  CUSTOMER_REPOSITORY,
+  ICustomerRepository,
+} from 'src/@core/events/domain/repositories/customer-repository.interface';
 import { EventService } from 'src/@core/events/application/event.service';
-import { IEventRepository } from 'src/@core/events/domain/repositories/event-repository.interface';
+import {
+  EVENT_REPOSITORY,
+  IEventRepository,
+} from 'src/@core/events/domain/repositories/event-repository.interface';
 import { PaymentGateway } from 'src/@core/events/application/payment.gateway';
 import { OrderService } from 'src/@core/events/application/order.service';
-import { IOrderRepository } from 'src/@core/events/domain/repositories/order-repository.interface';
-import { ISpotReservationRepository } from 'src/@core/events/domain/repositories/spot-reservation-repository.interface';
+import {
+  IOrderRepository,
+  ORDER_REPOSITORY,
+} from 'src/@core/events/domain/repositories/order-repository.interface';
+import {
+  ISpotReservationRepository,
+  SPOT_RESERVATION_REPOSITORY,
+} from 'src/@core/events/domain/repositories/spot-reservation-repository.interface';
 import { PartnersController } from './partners/partners.controller';
 import { CustomersController } from './customers/customers.controller';
 import { EventsController } from './events/events.controller';
 import { EventSectionsController } from './events/event-sections.controller';
 import { EventSpotsController } from './events/event-spots.controller';
 import { OrdersController } from './orders/orders.controller';
+import { ApplicationModule } from 'src/application/application.module';
+import { ApplicationService } from 'src/@core/common/application/application.service';
 
 @Module({
   imports: [
@@ -44,38 +64,39 @@ import { OrdersController } from './orders/orders.controller';
       OrderSchema,
       SpotReservationSchema,
     ]),
+    ApplicationModule,
   ],
   providers: [
     {
-      provide: 'IPartnerRepository',
+      provide: PARTNER_REPOSITORY,
       useFactory: (em: EntityManager) => {
         return new PartnerMysqlRepository(em);
       },
       inject: [EntityManager],
     },
     {
-      provide: 'IEventRepository',
+      provide: EVENT_REPOSITORY,
       useFactory: (em: EntityManager) => {
         return new EventMysqlRepository(em);
       },
       inject: [EntityManager],
     },
     {
-      provide: 'ICustomerRepository',
+      provide: CUSTOMER_REPOSITORY,
       useFactory: (em: EntityManager) => {
         return new CustomerMysqlRepository(em);
       },
       inject: [EntityManager],
     },
     {
-      provide: 'IOrderRepository',
+      provide: ORDER_REPOSITORY,
       useFactory: (em: EntityManager) => {
         return new OrderMysqlRepository(em);
       },
       inject: [EntityManager],
     },
     {
-      provide: 'ISpotReservationRepository',
+      provide: SPOT_RESERVATION_REPOSITORY,
       useFactory: (em: EntityManager) => {
         return new SpotReservationMysqlRepository(em);
       },
@@ -83,15 +104,17 @@ import { OrdersController } from './orders/orders.controller';
     },
     {
       provide: PartnerService,
-      useFactory: (partnerRepository: IPartnerRepository, uow: IUnitOfWork) =>
-        new PartnerService(partnerRepository, uow),
-      inject: ['IPartnerRepository', 'IUnitOfWork'],
+      useFactory: (
+        partnerRepository: IPartnerRepository,
+        appService: ApplicationService,
+      ) => new PartnerService(partnerRepository, appService),
+      inject: [PARTNER_REPOSITORY, ApplicationService],
     },
     {
       provide: CustomerService,
       useFactory: (customerRepository: ICustomerRepository, uow: IUnitOfWork) =>
         new CustomerService(customerRepository, uow),
-      inject: ['ICustomerRepository', 'IUnitOfWork'],
+      inject: [CUSTOMER_REPOSITORY, IUNIT_OF_WORK],
     },
     {
       provide: EventService,
@@ -100,7 +123,7 @@ import { OrdersController } from './orders/orders.controller';
         partnerRepository: IPartnerRepository,
         uow: IUnitOfWork,
       ) => new EventService(eventRepository, partnerRepository, uow),
-      inject: ['IEventRepository', 'IPartnerRepository', 'IUnitOfWork'],
+      inject: [EVENT_REPOSITORY, PARTNER_REPOSITORY, IUNIT_OF_WORK],
     },
     PaymentGateway,
     {
@@ -122,11 +145,11 @@ import { OrdersController } from './orders/orders.controller';
           uow,
         ),
       inject: [
-        'IOrderRepository',
-        'IEventRepository',
-        'ISpotReservationRepository',
-        'ICustomerRepository',
-        'IUnitOfWork',
+        ORDER_REPOSITORY,
+        EVENT_REPOSITORY,
+        SPOT_RESERVATION_REPOSITORY,
+        CUSTOMER_REPOSITORY,
+        IUNIT_OF_WORK,
         PaymentGateway,
       ],
     },

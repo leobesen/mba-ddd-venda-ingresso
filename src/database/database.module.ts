@@ -1,6 +1,7 @@
 import { EntityManager, MySqlDriver } from '@mikro-orm/mysql';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Global, Module } from '@nestjs/common';
+import { IUNIT_OF_WORK } from 'src/@core/common/application/unit-of-work.interface';
 import { UnitOfWorkMikroOrm } from 'src/@core/common/infra/unit-of-work-mikro-orm';
 import {
   CustomerSchema,
@@ -36,13 +37,13 @@ import {
   ],
   providers: [
     {
-      provide: 'IUnitOfWork',
+      provide: IUNIT_OF_WORK,
       useFactory: (em: EntityManager) => {
         return new UnitOfWorkMikroOrm(em);
       },
       inject: [EntityManager],
     },
   ],
-  exports: ['IUnitOfWork'],
+  exports: [IUNIT_OF_WORK],
 })
 export class DatabaseModule {}
