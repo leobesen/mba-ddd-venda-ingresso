@@ -1,10 +1,10 @@
-import crypto from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { ValueObject } from './value-object';
 import { validate as uuidValidate } from 'uuid';
 
 export class Uuid extends ValueObject<string> {
   constructor(id?: string) {
-    const value = id || crypto.randomUUID();
+    const value = id || randomUUID();
     super(value);
     this.validate(value);
   }
