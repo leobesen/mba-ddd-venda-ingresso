@@ -1,5 +1,6 @@
 import { AggregateRoot } from '../domain/aggregate-root';
 
+export const IUNIT_OF_WORK = Symbol('IUnitOfWork');
 export interface IUnitOfWork {
   beginTransaction(): Promise<void>;
   completeTransaction(): Promise<void>;
