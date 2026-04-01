@@ -1,5 +1,8 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { Order, OrderId } from 'apps/mba-ddd-venda-ingresso/src/@core/events/domain/entities/order.entity';
+import {
+  Order,
+  OrderId,
+} from 'apps/mba-ddd-venda-ingresso/src/@core/events/domain/entities/order.entity';
 import { IOrderRepository } from 'apps/mba-ddd-venda-ingresso/src/@core/events/domain/repositories/order-repository.interface';
 
 export class OrderMysqlRepository implements IOrderRepository {

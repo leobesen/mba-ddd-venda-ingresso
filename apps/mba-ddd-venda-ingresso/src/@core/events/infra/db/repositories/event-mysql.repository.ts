@@ -1,5 +1,8 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { Event, EventId } from 'apps/mba-ddd-venda-ingresso/src/@core/events/domain/entities/event.entity';
+import {
+  Event,
+  EventId,
+} from 'apps/mba-ddd-venda-ingresso/src/@core/events/domain/entities/event.entity';
 import { IEventRepository } from 'apps/mba-ddd-venda-ingresso/src/@core/events/domain/repositories/event-repository.interface';
 
 export class EventMysqlRepository implements IEventRepository {
